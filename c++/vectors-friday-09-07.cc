@@ -1,3 +1,5 @@
+// NOTE!!! Read the README to learn how to compile this
+
 /*
  * main.cpp: Demonstrates some usages of vector, recursion, and
  * higher order functions.
