@@ -6,6 +6,7 @@
  */
 #include <exception>
 #include <iostream>
+#include <functional>
 
 using namespace std;
 
@@ -178,6 +179,60 @@ public:
   }
 };
 
+// Key-value pair
+template<typename K, typename V>
+struct KVPair {
+public:
+  K key;
+  V value;
+  
+  KVPair(K key, V value) : key(key), value(value) { }
+};
 
+template<typename K>
+class Not_in_dictionary : public exception {
+private:
+  K key;
+  
+public:
+  Not_in_dictionary(K key) : key(key) { }
 
+  const char *what() const throw()
+  {
+    return "Key not in dictionary";
+  }
+};
 
+template<typename K, typename V>
+class Dictionary {
+private:
+  typedef KVPair<K,V> pair;
+  LLVector<pair> *table;
+  unsigned int size;
+
+  std::size_t bucket(K key) {
+    return std::hash<K>(key) % 256;
+  }
+
+public:
+  // Initialize a vector containing an empty list
+  Dictionary()
+    : table(new LLVector<KVPair<K,V>>[256])
+      , size(256) { }
+
+  void insert(K key, V value) {
+    pair p(key,value);
+    table[bucket(key)].addToFront(p);
+  }
+
+  // Look up value corresponding to `key`.
+  // Throws: Not_in_dictionary if `key` not in dictionary
+  V lookup(K key) {
+    for (pair *ptr = table[bucket(key)].first(); ptr != NULL; ptr = ptr->next) {
+      if (ptr->key == key) {
+        return ptr->value;
+      }
+    }
+    throw Not_in_dictionary<K>(key);
+  }
+};

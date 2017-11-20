@@ -6,7 +6,7 @@
 #include <iostream>
 #include <chrono>
 #include <string>
-#include "vector.h"
+#include "containers.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -41,15 +41,26 @@ void benchmark_arrayvec() {
   }
 }
 
+void benchmark_llvec() {
+  LLVector<int> v;
+
+  for(int i = 0; i < iters; i++) {
+    v.addToFront(i);
+  }
+}
+
 int main(int argc, char **argv) {
   cout << "Starting the example...\n";
   if (argc < 2) {
     cout << "You can specify how many iterations you want to use with first cmd line param\n";
-    iters = 1000;
+    iters = 20000;
   } else {
     iters = std::stoi(argv[1]);
   }
 
   // Run benchmarks to build array vectors
   benchmark(benchmark_arrayvec, "build-arrayvec");
+
+  // Run benchmarks to build array vectors
+  benchmark(benchmark_llvec, "build-llvec");
 }
